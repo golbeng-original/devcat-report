@@ -1,0 +1,11 @@
+scenario:
+  # 시나리오 고유 ID
+  scenario_id : 100001
+  
+  desc: |
+    '공간의 틈 시나리오'
+  
+  # 시나리오에 사용할 Scene
+  root_scene_path : 'path/to/Scene/Scenario_Root'
+  # 사니라오 시작 컷 ID
+  entry_flow_id : 1

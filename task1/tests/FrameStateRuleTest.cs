@@ -17,14 +17,14 @@ public class FrameStateRuleTest
     {
         var stateRule = new BonusFrameStateRule();
         var isVerified = stateRule.IsVerifyPinFallCount([1], 10);
-        Assert.True(isVerified);
+        Assert.False(isVerified);
     }
 
     [Fact]
     public void BonusFrameStateRule3()
     {
         var stateRule = new BonusFrameStateRule();
-        var isVerified = stateRule.IsVerifyPinFallCount([10], 10);
+        var isVerified = stateRule.IsVerifyPinFallCount([1], 9);
         Assert.True(isVerified);
     }
 

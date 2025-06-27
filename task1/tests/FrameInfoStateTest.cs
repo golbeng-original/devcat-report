@@ -47,6 +47,17 @@ public class FrameInfoStateTest
     [Fact]
     public void TestFrameState2()
     {
+        var frameInfo = new FrameInfo(10, new BonusFrameStateRule(), true);
+        frameInfo.UpdatePinFall(1);
+        frameInfo.UpdatePinFall(1);
+
+        var frameStateInfo = frameInfo.FrameStateInfo;
+        Assert.Equal(FrameState.CompleteLastFrame, frameStateInfo.FrameState);
+    }
+
+    [Fact]
+    public void TestFrameState3()
+    {
         var frameInfo = new FrameInfo(1, new NormalFrameStateRule(), false);
         frameInfo.UpdatePinFall(10);
 
@@ -55,7 +66,7 @@ public class FrameInfoStateTest
     }
 
     [Fact]
-    public void TestFrameState3()
+    public void TestFrameState4()
     {
         var frameInfo = new FrameInfo(1, new NormalFrameStateRule(), false);
         frameInfo.UpdatePinFall(1);
@@ -66,11 +77,22 @@ public class FrameInfoStateTest
     }
 
     [Fact]
-    public void TestFrameState4()
+    public void TestFrameState5()
     {
         var frameInfo = new FrameInfo(1, new NormalFrameStateRule(), false);
         frameInfo.UpdatePinFall(1);
         frameInfo.UpdatePinFall(9);
+
+        var frameStateInfo = frameInfo.FrameStateInfo;
+        Assert.Equal(FrameState.Spare, frameStateInfo.FrameState);
+    }
+
+    [Fact]
+    public void TestFrameState6()
+    {
+        var frameInfo = new FrameInfo(1, new NormalFrameStateRule(), false);
+        frameInfo.UpdatePinFall(9);
+        frameInfo.UpdatePinFall(1);
 
         var frameStateInfo = frameInfo.FrameStateInfo;
         Assert.Equal(FrameState.Spare, frameStateInfo.FrameState);

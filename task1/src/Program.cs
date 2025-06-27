@@ -38,8 +38,19 @@ public static class FrameStateExtension
 #region FrameStateRules(한 프레임의 OpenFrame, Strike, Spare 규칙 처리 담당)
 public interface IFrameStateRule
 {
+    /// <summary>
+    /// 쓰러뜨린 pin의 상태를 기반으로 frame이 완료 되었는지 판단
+    /// </summary>
     public bool IsPending(IReadOnlyList<int> pins);
+
+    /// <summary>
+    /// 쓰러뜨린 pin의 상태를 기반으로 frame이 상태 결정
+    /// </summary>
     public FrameState GetFrameState(IReadOnlyList<int> pins);
+
+    /// <summary>
+    /// 이전까지 pin의 상태와 새로운 쓰러뜨린 pin의 갯수를 기반으로 유효성 검증
+    /// </summary>
     public bool IsVerifyPinFallCount(IReadOnlyList<int> pins, int addPinFallCount);
 }
 
@@ -80,6 +91,11 @@ public class BonusFrameStateRule : IFrameStateRule
         }
 
         if (pins.Count == 2 && pins.Sum() < 10)
+        {
+            return false;
+        }
+
+        if (pins.Count == 1 && pins[0] != 10 && pins[0] + addPinFallCount > 10)
         {
             return false;
         }
@@ -439,42 +455,36 @@ public class FrameInfoFactory
 #region BowlingRoundOutput(BowlingRound 출력 책임)
 public abstract class IBowlingRoundOutput
 {
+    // 출력 순서는 정해져 있어서 Output의 흐름은 고정적이다.
+    // 일반 프레임, 보너스 프레임 출력 영역은 구현체에 의임
+    // 일반 프레임 점수 출력, 보너스 프레임 점수 출력 영역은 구현체에 의임
     public void Output(int maxFrame, BowlingRound bowlingRound)
     {
         var frames = bowlingRound.frameCollection.Frames;
 
-        var pinOutput = new StringBuilder();
         for (int i = 1; i <= maxFrame; i++)
         {
             var frame = frames.FirstOrDefault(e => e.FrameNum == i);
-
-            pinOutput.Append($"{i,3}");
-            pinOutput.Append(this.PresentFrame(i, maxFrame, frame));
+            this.PresentFrame(i, maxFrame, frame);
         }
-        pinOutput.AppendLine();
 
         var frameScores = bowlingRound.frameScoreInfoCollection.FrameScores;
         for (int i = 1; i <= maxFrame; i++)
         {
             var frameScore = frameScores.FirstOrDefault(e => e.FrameNum == i, FrameScoreInfo.Default);
-
-            pinOutput.Append($"{' ',3}");
-            pinOutput.Append(this.PresentFrameScore(i, maxFrame, frameScore));
+            this.PresentFrameScore(i, maxFrame, frameScore);
         }
-        pinOutput.AppendLine();
-
-        Console.WriteLine(pinOutput);
     }
 
     /// <summary>
     /// 프레임의 PinFall 상태를 출력
     /// </summary>
-    protected abstract string PresentFrame(int frameNum, int maxFrame, FrameInfo? frameInfo);
+    protected abstract void PresentFrame(int frameNum, int maxFrame, FrameInfo? frameInfo);
 
     /// <summary>
     /// 프레임의 누적 점수 출력
     /// </summary>
-    protected abstract string PresentFrameScore(int frameNum, int maxFrame, FrameScoreInfo frameScoreInfo);
+    protected abstract void PresentFrameScore(int frameNum, int maxFrame, FrameScoreInfo frameScoreInfo);
 }
 
 /// <summary>
@@ -604,23 +614,47 @@ public class ConsoleBowlingRoundOutput : IBowlingRoundOutput
         }
     }
 
-    protected override string PresentFrame(int frameNum, int maxFrame, FrameInfo? frameInfo)
+    protected override void PresentFrame(int frameNum, int maxFrame, FrameInfo? frameInfo)
     {
+        Console.Write($"{frameNum,3}");
+
         if (frameNum == maxFrame)
         {
-            return new BonusFrameOutput(frameInfo).ToString();
+            Console.Write(new BonusFrameOutput(frameInfo));
+        }
+        else
+        {
+            Console.Write(new NormalFrameOutput(frameInfo));
         }
 
-        return new NormalFrameOutput(frameInfo).ToString();
+        if (frameNum == maxFrame)
+        {
+            Console.WriteLine();
+        }
     }
-    protected override string PresentFrameScore(int frameNum, int maxFrame, FrameScoreInfo frameScoreInfo)
+    protected override void PresentFrameScore(int frameNum, int maxFrame, FrameScoreInfo frameScoreInfo)
     {
-        if (frameNum == maxFrame)
+        if (frameNum == 0)
         {
-            return new BonusFrameScoreOutput(frameScoreInfo).ToString();
+            Console.WriteLine();
         }
 
-        return new NormalFrameScoreOutput(frameScoreInfo).ToString();
+        Console.Write($"{' ',3}");
+
+        if (frameNum == maxFrame)
+        {
+            Console.Write(new BonusFrameScoreOutput(frameScoreInfo));
+        }
+        else
+        {
+            Console.Write(new NormalFrameScoreOutput(frameScoreInfo));
+        }
+
+        if (frameNum == maxFrame)
+        {
+            Console.WriteLine();
+            Console.WriteLine();
+        }
     }
 }
 #endregion

@@ -1,0 +1,39 @@
+# 플로우(컷) 완료 조건 정의
+complete_meta:
+  - id: 6000
+    # 조건 타입
+    type: deactive
+    
+    # 조건의 대상
+    value:
+      - meta: npc
+        meta_id: 3000
+      - meta: npc
+        meta_id: 3001
+      - meta: npc
+        meta_id: 3002
+
+  - id: 6001
+    type: player_state
+    value:
+      - hp:
+          condition : lt
+          value : 100
+
+  - id: 6002
+    type: collision
+    value:
+      - meta: prop
+        meta_id: 5000
+
+  - id: 6003
+    type: collision
+    value:
+      - meta: prop
+        meta_id: 5001
+
+  - id: 6004
+    type: deactive
+    value:
+      - meta: npc
+        meta_id: 3002

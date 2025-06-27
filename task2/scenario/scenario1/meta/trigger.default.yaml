@@ -1,0 +1,28 @@
+# 시나리오 중에 트리거 동작 정의
+trigger_meta:
+  - id: 4000
+    type: take_damage
+    condition:
+      meta: npc
+      meta_id: 3000
+    action:
+      type: speak
+      value: '너는... 이 세상에... 있어서는 안돼..'
+
+  - id: 4001
+    type: appear
+    condition:
+      meta: npc
+      meta_id: 3000
+    action:
+      type: take_skill
+      value: [10100, 1] # 스킬 id, level
+
+  - id: 4002
+    type: appear
+    condition:
+      meta: npc
+      meta_id: 3010
+    action:
+      type: take_skill
+      value: [10200, 1] # 스킬 id, level

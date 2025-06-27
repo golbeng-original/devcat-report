@@ -7,7 +7,6 @@ public class FrameScoreTest
     [Fact]
     public void TestAllStrikeScore()
     {
-
         var frameInfoFactory = new FrameInfoFactory();
 
         var frameCollection = new FrameInfoCollection();

@@ -1,0 +1,283 @@
+flows:
+  # 컷 정의
+  - id: 1
+    desc : |
+      유저 등장 씬
+      컷에 대한 설명 입력 (여러줄 입력 가능)
+
+    # 컷 스킵 가능 여부
+    is_skippable : true  
+    # 유저 조작 가능 여부
+    enable_control: false
+    # 유저 위치 지정
+    player_position_tag : ['tag1']
+
+    # 추가로 불러와야 할 Scene 정의
+    addtive_scene:
+      scene_path : 'path/to/Scene/Scenario_1'
+
+    # 컷 시작시 동작
+    start_actions:
+      - type: spawn
+        value:
+          meta : prop
+          meta_id: 5000
+          spawn_position_tag : 'tag'
+
+      - type : annotaion
+        value:
+          meta_id: 80000
+
+    # 연결 할 타임라인 Asset 경로
+    timeline:
+      timeline_path : 'path/to/Scene/Timeline_1'
+      timeline_events: null
+
+    # 컷 진행 중 트리거가 발생 할 trigger meta id와 연결
+    triggers: null
+  
+    # 다음 컷 정의 및 다음 컷으로 넘어가기 위한 조건 정의 연결
+    next_flows:
+      - type: timeline
+        meta_ids: null
+        next_id: 2
+        transition:
+          transfer_type : fade
+          duration_sec: 3
+
+  - id: 2
+    desc : |
+      '유저가 무기 획득'
+    
+    is_skippable : false
+    enable_control: true
+    player_position_tag : null
+
+    addtive_scene:
+      scene_path : 'path/to/Scene/Scenario_1'
+
+    start_actions: null
+    timeline: null
+
+    triggers: null
+
+    next_flows:
+      - type: complete_meta
+        complete_meta_ids: [6002]
+        next_id: 3
+        transition:
+          transfer_type : none
+          duration_sec: 0
+
+  - id: 3
+    desc : |
+      '공간의 틈 발생'
+    
+    is_skippable : false
+    enable_control: false
+    player_position_tag : null
+
+    addtive_scene:
+      scene_path : 'path/to/Scene/Scenario_1'
+    
+    start_actions: null
+
+    timeline:
+      timeline_path : 'path/to/Scene/Timeline_3'
+      timeline_events:
+        - signal_name: 'appear_portal'
+          action:
+            - type : spwan
+              value:
+                meta: prop
+                meta_id : 5001
+                spawn_position_tag : 'tag'
+
+            - type : annotaion
+              value:
+                meta_id: 80000
+
+    triggers: null
+
+    next_flows:
+      - type: timeline
+        complete_meta_ids: null
+        next_id: 3
+        transfer_type : fade
+        duration_sec: 3
+
+  - id: 4
+    desc : |
+      '공간의 틈으로 이동'
+
+    is_skippable : false
+    enable_control: false
+    player_position_tag : null
+
+    addtive_scene:
+      scene_path : 'path/to/Scene/Scenario_1'
+    
+    start_actions: null
+
+    timeline: null
+
+    triggers: null
+
+    next_flows:
+      - type: complete_meta
+        complete_meta_ids: [6003]
+        next_id: 5
+        transition:
+          transfer_type : fade
+          duration_sec: 3
+
+  - id: 5
+    desc : |
+      '공간의 틈 너머로..'
+
+    is_skippable : false
+    enable_control: false
+    player_position_tag : null
+
+    addtive_scene: null
+
+    start_actions: null
+
+    timeline:
+      timeline_path : 'path/to/Scene/Timeline_5'
+      timeline_events:
+        - signal_name: 'appear_npc'
+          action:
+            - type : spawn
+              value:
+                meta : npc
+                meta_id : 3000
+                spawn_position_tag : 'tag'
+
+    next_flows:
+      - type: timeline
+        complete_meta_ids: null
+        next_id: 6
+        transfer_type : none
+        duration_sec: 0
+
+  - id: 6
+    desc : |
+      '고블린과 첫 전투'
+
+    is_skippable : false
+    enable_control: false
+    player_position_tag : null
+
+    addtive_scene: null
+    
+    start_actions:
+      - type: spawn
+        value:
+          meta: npc
+          meta_id: 3001
+          spawn_position_tag : 'tag'
+      - type: spawn
+        value:
+          meta: npc
+          meta_id: 3002
+          spawn_position_tag : 'tag'
+
+    timeline: null
+
+    triggers: [4000, 4001]
+
+    next_flows:
+      - type: complete_meta
+        complete_meta_ids: [6000]
+        next_id: 7
+        transition:
+          transfer_type : fade
+          duration_sec: 3
+
+  - id: 7
+    desc : |
+      '대왕 고블린 등장'
+
+    is_skippable : true
+    enable_control: false
+    player_position_tag : ['tag1']
+    
+    addtive_scene: null
+    
+    start_actions:
+      - type: spawn
+        value:
+          meta: npc
+          meta_id: 3010
+          spawn_position_tag : 'tag'
+
+    timeline:
+      timeline_path : 'path/to/Scene/Timeline_6'
+      timeline_events:
+        - signal_name: 'user_speak_1'
+          action:
+            - type : speak
+              value:
+                meta: user
+                speech: '왜 이렇게 커???'
+
+    triggers: [4000, 4001]
+
+    next_flows:
+      - type: timeline
+        complete_meta_ids: null
+        next_id: 8
+        transition:
+          transfer_type : none
+          duration_sec: 3
+
+  - id: 8
+    desc : |
+      '대왕 고블린 전투'
+
+    is_skippable : true
+    enable_control: false
+    player_position_tag : ['tag1']
+
+    addtive_scene: null
+    
+    start_actions: null
+    
+    timeline:
+      timeline_path : 'path/to/Scene/Timeline_6'
+      timeline_events: null
+
+    triggers: [4002]
+
+    next_flows:
+      - type: complete_meta
+        meta_ids: [6004]
+        next_id: 9
+        transition:
+          transfer_type : fade
+          duration_sec: 3
+
+  - id: 9
+    desc : |
+      '시나리오 끝'
+    
+    is_skippable : false
+    enable_control: false
+    player_position_tag : null
+
+    addtive_scene: null
+    
+    start_actions: null
+    
+    timeline: null
+
+    triggers: null
+
+    next_flows:
+      - type: complete_flow
+        meta_ids: null
+        next_id: null
+        transition:
+          transfer_type : none
+          duration_sec: 0

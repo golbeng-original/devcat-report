@@ -1,0 +1,9 @@
+# 시나리오 중에 사용 될 Item, 및 오브젝트 정의
+prop_meta:
+  - id: 5000
+    type: item
+    value: 60001
+
+  - id: 5001
+    type: object
+    value: path/to/object
